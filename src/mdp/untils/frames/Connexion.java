@@ -10,7 +10,6 @@ import java.awt.event.FocusEvent;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
@@ -29,7 +28,7 @@ public class Connexion extends JDialog {
 	public Connexion() {
 		this.setTitle("Connexion");
 		this.setResizable(false);
-		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.setModal(true);
 		
 		// Panel principal
@@ -120,6 +119,7 @@ public class Connexion extends JDialog {
 					this.pack();
 					this.setLocationRelativeTo(null);
 				} else {
+					Main.compteCourent = comptes[idx];
 					dispose();
 				}
 			}

@@ -11,12 +11,15 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 
 import mdp.untils.types.Compte;
 import mdp.untils.types.MotDePasse;
+import mdp.untils.util.Cryptage;
 import mdp.untils.util.MyFile;
 
 @SuppressWarnings("serial")
@@ -28,6 +31,7 @@ public class Main extends JDialog {
 	private static MyFile fileMotsDePasse = new MyFile("/home/theteksa/Documents/mots_de_passe.txt", ';');
 	private static Compte[] comptes;
 	private static MotDePasse[] motsDePasse;
+	public static Compte compteCourent = null;
 	
 	public Main() {
 		this.setTitle("Mot de passe");
@@ -36,8 +40,17 @@ public class Main extends JDialog {
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		this.setJMenuBar(this.createJMenuBar());
 		
+		initTabComptes();
+		initTabMotDePasse();
+		
+		String[] entetes = {"Nom", "ID", "Adresse", "Mot de passe"};
+		String[][] donnees = getTabStringMotDePasse(compteCourent);
+		
 		JPanel contentPane = (JPanel) this.getContentPane();
 		contentPane.setLayout(new BorderLayout());
+		
+		JTable tableauMotsDePasse = new JTable(donnees, entetes);
+		contentPane.add(new JScrollPane(tableauMotsDePasse), BorderLayout.CENTER);
 	}
 	
 	public static Compte[] getComptes() {
@@ -162,6 +175,24 @@ public class Main extends JDialog {
 		Main frmMain = new Main();
 		frmMain.setVisible(true);
 	}
+	
+	private void initTabComptes() {
+		String[][] comptesString = fileComptes.getString();
+		comptes = new Compte[comptesString.length];
+		
+		for (int i = 0; i < comptesString.length; i++) {
+			comptes[i] = new Compte(Cryptage.decodage(comptesString[i][0], comptesString[i][1]), comptesString[i][1], Cryptage.decodage(comptesString[i][2], comptesString[i][3]), comptesString[i][3]);
+		}
+	}
+	
+	private void initTabMotDePasse() {
+		String[][] motsDePasseString = fileMotsDePasse.getString();
+		motsDePasse = new MotDePasse[motsDePasseString.length];
+		
+		for (int i = 0; i < motsDePasseString.length; i++) {
+			motsDePasse[i] = new MotDePasse(Cryptage.decodage(motsDePasseString[i][0], motsDePasseString[i][1]), motsDePasseString[i][1], Cryptage.decodage(motsDePasseString[i][2], motsDePasseString[i][3]), motsDePasseString[i][3], Cryptage.decodage(motsDePasseString[i][4], motsDePasseString[i][5]), motsDePasseString[i][5], Cryptage.decodage(motsDePasseString[i][6], motsDePasseString[i][7]), motsDePasseString[i][7], Cryptage.decodage(motsDePasseString[i][8], motsDePasseString[i][9]), motsDePasseString[i][9]);
+		}
+	}
 
 	public static void addCompte(Compte c) {
 		Compte[] newComptes = new Compte[comptes.length + 1];
@@ -183,5 +214,26 @@ public class Main extends JDialog {
 		newMotsDePasse[motsDePasse.length] = m;
 		motsDePasse = newMotsDePasse;
 		fileMotsDePasse.ajouter(m);
+	}
+	
+	public String[][] getTabStringMotDePasse(Compte c) {
+		String[][] result1 = new String[motsDePasse.length][4];
+		
+		if (c == null) {
+			return result1;
+		}
+		for (int i = 0; i < motsDePasse.length; i++) {
+			if (motsDePasse[i].getLoginCompte().equals(c.getLogin())) {
+				result1[i][0] = motsDePasse[i].getNom();
+				result1[i][1] = motsDePasse[i].getId();
+				result1[i][2] = motsDePasse[i].getAdresse();
+				result1[i][3] = motsDePasse[i].getMotDePasse();
+			}
+		}
+		String[][] result2 = new String[result1.length][4];
+		for (int i = 0; i < result1.length; i++) {
+			result2[i] = result1[i];
+		}
+		return result2;
 	}
 }

@@ -9,7 +9,6 @@ import java.awt.event.FocusEvent;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
@@ -24,12 +23,12 @@ public class NouveauCompte extends JDialog {
 	private String password;
 	private String confirmPassword;
 	
-	private JLabel lblMessage = new JLabel();
+	private JLabel lblMessage = new JLabel("");
 
 	public NouveauCompte() {
 		this.setTitle("Nouveau compte");
 		this.setResizable(false);
-		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.setModal(true);
 		
 		JPanel contentPan = (JPanel) this.getContentPane();
