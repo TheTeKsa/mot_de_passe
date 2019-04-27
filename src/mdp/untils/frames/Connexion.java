@@ -47,7 +47,6 @@ public class Connexion extends JDialog {
 		panLogin.add(lblLogin);
 		
 		JTextField txtFieldLogin = new JTextField();
-		txtFieldLogin.setPreferredSize(new Dimension(100, 25));
 		txtFieldLogin.addFocusListener(new FocusAdapter() {
 			
 			@Override
@@ -68,7 +67,7 @@ public class Connexion extends JDialog {
 		panPassword.add(lblPassword);
 		
 		JPasswordField pswFieldPassword = new JPasswordField();
-		pswFieldPassword.setPreferredSize(new Dimension(100, 25));
+		pswFieldPassword.setPreferredSize(new Dimension(150, 25));
 		pswFieldPassword.addFocusListener(new FocusAdapter() {
 			
 			@Override
@@ -120,6 +119,7 @@ public class Connexion extends JDialog {
 					this.setLocationRelativeTo(null);
 				} else {
 					Main.compteCourent = comptes[idx];
+					Main.majTable();
 					dispose();
 				}
 			}

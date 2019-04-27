@@ -37,7 +37,7 @@ public class NouveauCompte extends JDialog {
 		JPanel panLogin = new JPanel();
 		panLogin.setLayout(new BoxLayout(panLogin, BoxLayout.X_AXIS));
 		
-		JLabel lblLogin = new JLabel("                    Login :                  ");
+		JLabel lblLogin = new JLabel("           Login :           ");
 		panLogin.add(lblLogin);
 		
 		JTextField txtFieldLogin = new JTextField();
@@ -56,7 +56,7 @@ public class NouveauCompte extends JDialog {
 		JPanel panMDP = new JPanel();
 		panMDP.setLayout(new BoxLayout(panMDP, BoxLayout.X_AXIS));
 		
-		JLabel lblMDP = new JLabel("             Mot de passe :            ");
+		JLabel lblMDP = new JLabel("        Password :       ");
 		panMDP.add(lblMDP);
 		
 		JPasswordField pswFieldMDP = new JPasswordField();
@@ -75,11 +75,11 @@ public class NouveauCompte extends JDialog {
 		JPanel panConfirmMdp = new JPanel();
 		panConfirmMdp.setLayout(new BoxLayout(panConfirmMdp, BoxLayout.X_AXIS));
 		
-		JLabel lblConfirmMDP = new JLabel(" Confirmer le mot de passe :    ");
+		JLabel lblConfirmMDP = new JLabel(" Confirm password : ");
 		panConfirmMdp.add(lblConfirmMDP);
 		
 		JPasswordField pswFieldConfirmMDP = new JPasswordField();
-		pswFieldConfirmMDP.setPreferredSize(new Dimension(100, 25));
+		pswFieldConfirmMDP.setPreferredSize(new Dimension(150, 25));
 		pswFieldConfirmMDP.addFocusListener(new FocusAdapter() {
 			
 			@Override

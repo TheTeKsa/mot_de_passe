@@ -9,13 +9,14 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
 import mdp.untils.types.Compte;
 import mdp.untils.types.MotDePasse;
@@ -27,11 +28,13 @@ public class Main extends JDialog {
 	
 	private Connexion connexion = new Connexion();
 	private NouveauCompte nouveauCompte = new NouveauCompte();
+	private NouveauMotDePasse nouveauMotDePasse = new NouveauMotDePasse();
 	private static MyFile fileComptes = new MyFile("/home/theteksa/Documents/comptes.txt", ';');
 	private static MyFile fileMotsDePasse = new MyFile("/home/theteksa/Documents/mots_de_passe.txt", ';');
 	private static Compte[] comptes;
 	private static MotDePasse[] motsDePasse;
 	public static Compte compteCourent = null;
+	private static JTable tableauMotsDePasse;
 	
 	public Main() {
 		this.setTitle("Mot de passe");
@@ -49,12 +52,22 @@ public class Main extends JDialog {
 		JPanel contentPane = (JPanel) this.getContentPane();
 		contentPane.setLayout(new BorderLayout());
 		
-		JTable tableauMotsDePasse = new JTable(donnees, entetes);
+		TableModel model = new DefaultTableModel(donnees, entetes) {
+			public boolean isCellEditable(int rowIndex, int mColIndex) {
+				return false;
+			}
+		};
+		
+		tableauMotsDePasse = new JTable(model);
 		contentPane.add(new JScrollPane(tableauMotsDePasse), BorderLayout.CENTER);
 	}
 	
 	public static Compte[] getComptes() {
 		return comptes;
+	}
+	
+	public static MotDePasse[] getMotsDePasse() {
+		return motsDePasse;
 	}
 	
 	private JMenuBar createJMenuBar() {
@@ -79,7 +92,7 @@ public class Main extends JDialog {
 		
 		JMenuItem mnuNouveauCompte = new JMenuItem("Nouveau compte");
 		mnuNouveauCompte.setMnemonic('N');
-		mnuNouveauCompte.addActionListener(this::mnuNouveauCompte);
+		mnuNouveauCompte.addActionListener(this::mnuNouveauCompteListener);
 		mnuCompte.add(mnuNouveauCompte);
 		
 		mnuCompte.addSeparator();
@@ -97,7 +110,7 @@ public class Main extends JDialog {
 		JMenuItem mnuNouveauMDP = new JMenuItem("Nouveau mot de passe");
 		mnuNouveauMDP.setMnemonic('N');
 		mnuNouveauMDP.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK));
-		mnuNouveauMDP.addActionListener(null);
+		mnuNouveauMDP.addActionListener(this::mnuNouveauMotDePasseListener);
 		mnuMDP.add(mnuNouveauMDP);
 		
 		JMenuItem mnuSupprimerMDP = new JMenuItem("Supprimer mot de passe");
@@ -158,12 +171,15 @@ public class Main extends JDialog {
 	}
 	
 	private void mnuDeconnexionListener(ActionEvent event) {
-		JOptionPane.showMessageDialog(null, "test");
-		System.out.println("Deconnexion");
+		compteCourent = null;
 	}
 	
-	private void mnuNouveauCompte(ActionEvent event) {
+	private void mnuNouveauCompteListener(ActionEvent event) {
 		nouveauCompte.setVisible(true);
+	}
+	
+	private void mnuNouveauMotDePasseListener(ActionEvent event) {
+		nouveauMotDePasse.setVisible(true);
 	}
 	
 	private void mnuExitListener(ActionEvent event) {
@@ -216,7 +232,7 @@ public class Main extends JDialog {
 		fileMotsDePasse.ajouter(m);
 	}
 	
-	public String[][] getTabStringMotDePasse(Compte c) {
+	public static String[][] getTabStringMotDePasse(Compte c) {
 		String[][] result1 = new String[motsDePasse.length][4];
 		
 		if (c == null) {
@@ -235,5 +251,15 @@ public class Main extends JDialog {
 			result2[i] = result1[i];
 		}
 		return result2;
+	}
+	
+	public static void majTable() {
+		String[][] donnees = getTabStringMotDePasse(compteCourent);
+		
+		for (int i = 0; i < donnees.length; i++) {
+			for (int j = 0; j < donnees[i].length; j++) {
+				tableauMotsDePasse.setValueAt(donnees[i][j], i, j);
+			}
+		}
 	}
 }
