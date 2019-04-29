@@ -172,6 +172,7 @@ public class Main extends JDialog {
 	
 	private void mnuDeconnexionListener(ActionEvent event) {
 		compteCourent = null;
+		majTable();
 	}
 	
 	private void mnuNouveauCompteListener(ActionEvent event) {
@@ -234,20 +235,22 @@ public class Main extends JDialog {
 	
 	public static String[][] getTabStringMotDePasse(Compte c) {
 		String[][] result1 = new String[motsDePasse.length][4];
+		int idx = 0;
 		
 		if (c == null) {
 			return result1;
 		}
 		for (int i = 0; i < motsDePasse.length; i++) {
 			if (motsDePasse[i].getLoginCompte().equals(c.getLogin())) {
-				result1[i][0] = motsDePasse[i].getNom();
-				result1[i][1] = motsDePasse[i].getId();
-				result1[i][2] = motsDePasse[i].getAdresse();
-				result1[i][3] = motsDePasse[i].getMotDePasse();
+				result1[idx][0] = motsDePasse[i].getNom();
+				result1[idx][1] = motsDePasse[i].getId();
+				result1[idx][2] = motsDePasse[i].getAdresse();
+				result1[idx][3] = motsDePasse[i].getMotDePasse();
+				idx ++;
 			}
 		}
-		String[][] result2 = new String[result1.length][4];
-		for (int i = 0; i < result1.length; i++) {
+		String[][] result2 = new String[idx][4];
+		for (int i = 0; i < result2.length; i++) {
 			result2[i] = result1[i];
 		}
 		return result2;
@@ -255,7 +258,6 @@ public class Main extends JDialog {
 	
 	public static void majTable() {
 		String[][] donnees = getTabStringMotDePasse(compteCourent);
-		
 		for (int i = 0; i < donnees.length; i++) {
 			for (int j = 0; j < donnees[i].length; j++) {
 				tableauMotsDePasse.setValueAt(donnees[i][j], i, j);
