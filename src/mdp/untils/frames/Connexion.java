@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -23,6 +25,8 @@ public class Connexion extends JDialog {
 	private String password;
 	private String login;
 	
+	private JTextField txtFieldLogin;
+	private JPasswordField pswFieldPassword;
 	private JLabel lblMessage= new JLabel("");
 	
 	public Connexion() {
@@ -46,7 +50,7 @@ public class Connexion extends JDialog {
 		JLabel lblLogin = new JLabel("    Login :     ");
 		panLogin.add(lblLogin);
 		
-		JTextField txtFieldLogin = new JTextField();
+		txtFieldLogin = new JTextField();
 		txtFieldLogin.addFocusListener(new FocusAdapter() {
 			
 			@Override
@@ -66,7 +70,7 @@ public class Connexion extends JDialog {
 		JLabel lblPassword = new JLabel(" Password : ");
 		panPassword.add(lblPassword);
 		
-		JPasswordField pswFieldPassword = new JPasswordField();
+		pswFieldPassword = new JPasswordField();
 		pswFieldPassword.setPreferredSize(new Dimension(150, 25));
 		pswFieldPassword.addFocusListener(new FocusAdapter() {
 			
@@ -98,6 +102,17 @@ public class Connexion extends JDialog {
 		
 		contentPan.add(panButton);
 		
+		this.addWindowListener(new WindowAdapter() {
+			
+			@Override
+			public void windowClosing(WindowEvent arg0) {
+				txtFieldLogin.setText("");
+				pswFieldPassword.setText("");
+				lblMessage.setText("");
+			}
+			
+		});
+		
 		this.pack();
 		this.setLocationRelativeTo(null);
 	}
@@ -119,7 +134,7 @@ public class Connexion extends JDialog {
 					this.setLocationRelativeTo(null);
 				} else {
 					Main.compteCourent = comptes[idx];
-					Main.majTable();
+					Main.ajouterDesMotsDePasseAuTableau(comptes[idx].getLesMotsDePasse());
 					dispose();
 				}
 			}
@@ -131,6 +146,9 @@ public class Connexion extends JDialog {
 	}
 	
 	private void btnQuitterListener(ActionEvent event) {
+		txtFieldLogin.setText("");
+		pswFieldPassword.setText("");
+		lblMessage.setText("");
 		dispose();
 	}
 	

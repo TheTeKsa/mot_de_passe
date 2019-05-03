@@ -159,6 +159,7 @@ public class NouveauMotDePasse extends JDialog {
 				if (!nomExist(nom) && motDePasse.equals(confirmMotDePasse)) {
 					MotDePasse mdp = new MotDePasse(Main.compteCourent.getLogin(), nom, id, adresse, motDePasse);
 					Main.addMotDePasse(mdp);
+					Main.ajouterUnMotDePasseAuTableau(mdp);
 					dispose();
 				} else if (nomExist(nom)) {
 					lblMessage.setText("Le nom existe deja");
@@ -195,7 +196,7 @@ public class NouveauMotDePasse extends JDialog {
 	}
 	
 	private boolean nomExist(String nom) {
-		MotDePasse[] lesMotsDePasse = Main.getMotsDePasse();
+		MotDePasse[] lesMotsDePasse = Main.compteCourent.getLesMotsDePasse();
 		
 		for (int i = 0; i < lesMotsDePasse.length; i++) {
 			if (lesMotsDePasse[i].getNom().equals(nom)) {

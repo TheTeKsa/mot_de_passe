@@ -16,7 +16,6 @@ import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 
 import mdp.untils.types.Compte;
 import mdp.untils.types.MotDePasse;
@@ -30,11 +29,10 @@ public class Main extends JDialog {
 	private NouveauCompte nouveauCompte = new NouveauCompte();
 	private NouveauMotDePasse nouveauMotDePasse = new NouveauMotDePasse();
 	private static MyFile fileComptes = new MyFile("/home/theteksa/Documents/comptes.txt", ';');
-	private static MyFile fileMotsDePasse = new MyFile("/home/theteksa/Documents/mots_de_passe.txt", ';');
 	private static Compte[] comptes;
-	private static MotDePasse[] motsDePasse;
 	public static Compte compteCourent = null;
 	private static JTable tableauMotsDePasse;
+	private static DefaultTableModel model;
 	
 	public Main() {
 		this.setTitle("Mot de passe");
@@ -44,19 +42,14 @@ public class Main extends JDialog {
 		this.setJMenuBar(this.createJMenuBar());
 		
 		initTabComptes();
-		initTabMotDePasse();
 		
 		String[] entetes = {"Nom", "ID", "Adresse", "Mot de passe"};
-		String[][] donnees = getTabStringMotDePasse(compteCourent);
+		String[][] donnees = getTabStringMotDePasse();
 		
 		JPanel contentPane = (JPanel) this.getContentPane();
 		contentPane.setLayout(new BorderLayout());
 		
-		TableModel model = new DefaultTableModel(donnees, entetes) {
-			public boolean isCellEditable(int rowIndex, int mColIndex) {
-				return false;
-			}
-		};
+		model = new DefaultTableModel(donnees, entetes);
 		
 		tableauMotsDePasse = new JTable(model);
 		contentPane.add(new JScrollPane(tableauMotsDePasse), BorderLayout.CENTER);
@@ -64,10 +57,6 @@ public class Main extends JDialog {
 	
 	public static Compte[] getComptes() {
 		return comptes;
-	}
-	
-	public static MotDePasse[] getMotsDePasse() {
-		return motsDePasse;
 	}
 	
 	private JMenuBar createJMenuBar() {
@@ -167,12 +156,14 @@ public class Main extends JDialog {
 	}
 	
 	private void mnuConnexionListener(ActionEvent event) {
-		connexion.setVisible(true);
+		if (compteCourent == null) {
+			connexion.setVisible(true);
+		}
 	}
 	
 	private void mnuDeconnexionListener(ActionEvent event) {
+		clearTableau();
 		compteCourent = null;
-		majTable();
 	}
 	
 	private void mnuNouveauCompteListener(ActionEvent event) {
@@ -201,15 +192,6 @@ public class Main extends JDialog {
 			comptes[i] = new Compte(Cryptage.decodage(comptesString[i][0], comptesString[i][1]), comptesString[i][1], Cryptage.decodage(comptesString[i][2], comptesString[i][3]), comptesString[i][3]);
 		}
 	}
-	
-	private void initTabMotDePasse() {
-		String[][] motsDePasseString = fileMotsDePasse.getString();
-		motsDePasse = new MotDePasse[motsDePasseString.length];
-		
-		for (int i = 0; i < motsDePasseString.length; i++) {
-			motsDePasse[i] = new MotDePasse(Cryptage.decodage(motsDePasseString[i][0], motsDePasseString[i][1]), motsDePasseString[i][1], Cryptage.decodage(motsDePasseString[i][2], motsDePasseString[i][3]), motsDePasseString[i][3], Cryptage.decodage(motsDePasseString[i][4], motsDePasseString[i][5]), motsDePasseString[i][5], Cryptage.decodage(motsDePasseString[i][6], motsDePasseString[i][7]), motsDePasseString[i][7], Cryptage.decodage(motsDePasseString[i][8], motsDePasseString[i][9]), motsDePasseString[i][9]);
-		}
-	}
 
 	public static void addCompte(Compte c) {
 		Compte[] newComptes = new Compte[comptes.length + 1];
@@ -223,45 +205,47 @@ public class Main extends JDialog {
 	}
 	
 	public static void addMotDePasse(MotDePasse m) {
-		MotDePasse[] newMotsDePasse = new MotDePasse[motsDePasse.length + 1];
+		MotDePasse[] newMotsDePasse = new MotDePasse[compteCourent.getLesMotsDePasse().length + 1];
 		
-		for (int i = 0; i < motsDePasse.length; i++) {
-			newMotsDePasse[i] = motsDePasse[i];
+		for (int i = 0; i < compteCourent.getLesMotsDePasse().length; i++) {
+			newMotsDePasse[i] = compteCourent.getLesMotsDePasse()[i];
 		}
-		newMotsDePasse[motsDePasse.length] = m;
-		motsDePasse = newMotsDePasse;
-		fileMotsDePasse.ajouter(m);
+		newMotsDePasse[compteCourent.getLesMotsDePasse().length] = m;
+		compteCourent.setLesMotsDePasse(newMotsDePasse);
+		compteCourent.getFile().ajouter(m);
 	}
 	
-	public static String[][] getTabStringMotDePasse(Compte c) {
-		String[][] result1 = new String[motsDePasse.length][4];
-		int idx = 0;
+	public static String[][] getTabStringMotDePasse() {
+		if (compteCourent == null) {
+			return new String[0][0];
+		}
 		
-		if (c == null) {
-			return result1;
+		String[][] result = new String[compteCourent.getLesMotsDePasse().length][4];
+		
+		for (int i = 0; i < result.length; i++) {
+			result[i][0] = compteCourent.getLesMotsDePasse()[i].getNom();
+			result[i][1] = compteCourent.getLesMotsDePasse()[i].getId();
+			result[i][2] = compteCourent.getLesMotsDePasse()[i].getAdresse();
+			result[i][3] = compteCourent.getLesMotsDePasse()[i].getMotDePasse();
 		}
-		for (int i = 0; i < motsDePasse.length; i++) {
-			if (motsDePasse[i].getLoginCompte().equals(c.getLogin())) {
-				result1[idx][0] = motsDePasse[i].getNom();
-				result1[idx][1] = motsDePasse[i].getId();
-				result1[idx][2] = motsDePasse[i].getAdresse();
-				result1[idx][3] = motsDePasse[i].getMotDePasse();
-				idx ++;
-			}
-		}
-		String[][] result2 = new String[idx][4];
-		for (int i = 0; i < result2.length; i++) {
-			result2[i] = result1[i];
-		}
-		return result2;
+		return result;
 	}
 	
-	public static void majTable() {
-		String[][] donnees = getTabStringMotDePasse(compteCourent);
-		for (int i = 0; i < donnees.length; i++) {
-			for (int j = 0; j < donnees[i].length; j++) {
-				tableauMotsDePasse.setValueAt(donnees[i][j], i, j);
-			}
+	public static void ajouterDesMotsDePasseAuTableau(MotDePasse[] lesMotsDePasse) {
+		for (int i = 0; i < lesMotsDePasse.length; i++) {
+			ajouterUnMotDePasseAuTableau(lesMotsDePasse[i]);
+		}
+	}
+	
+	public static void ajouterUnMotDePasseAuTableau(MotDePasse m) {
+		String[] mdpString = {m.getNom(), m.getId(), m.getAdresse(), m.getMotDePasse()};
+		
+		model.addRow(mdpString);
+	}
+	
+	public static void clearTableau() {
+		for (int i = 0; i < compteCourent.getLesMotsDePasse().length; i++) {
+			model.removeRow(0);
 		}
 	}
 }
