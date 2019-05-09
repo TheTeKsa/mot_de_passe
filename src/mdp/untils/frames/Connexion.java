@@ -1,11 +1,12 @@
 package mdp.untils.frames;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -38,10 +39,6 @@ public class Connexion extends JDialog {
 		// Panel principal
 		JPanel contentPan = (JPanel) this.getContentPane();
 		contentPan.setLayout(new BoxLayout(contentPan, BoxLayout.Y_AXIS));
-		
-		JLabel lblName = new JLabel("Connexion");
-		lblName.setAlignmentX(Component.CENTER_ALIGNMENT);
-		contentPan.add(lblName);
 		
 		// Panel du login
 		JPanel panLogin = new JPanel();
@@ -112,6 +109,30 @@ public class Connexion extends JDialog {
 			}
 			
 		});
+		txtFieldLogin.addKeyListener(new KeyAdapter() {
+			
+			@Override
+			public void keyPressed(KeyEvent arg0) {
+				if (arg0.getKeyCode() == KeyEvent.VK_ENTER) {
+					login = txtFieldLogin.getText();
+					password = passwordToString(pswFieldPassword.getPassword());
+					btnValiderListener(null);
+				}
+			}
+			
+		});
+		pswFieldPassword.addKeyListener(new KeyAdapter() {
+			
+			@Override
+			public void keyPressed(KeyEvent arg0) {
+				if (arg0.getKeyCode() == KeyEvent.VK_ENTER) {
+					login = txtFieldLogin.getText();
+					password = passwordToString(pswFieldPassword.getPassword());
+					btnValiderListener(null);
+				}
+			}
+			
+		});
 		
 		this.pack();
 		this.setLocationRelativeTo(null);
@@ -121,7 +142,7 @@ public class Connexion extends JDialog {
 		Compte[] comptes = Main.getComptes();
 		int idx;
 		
-		if (login != null && password != null) {
+		if (!login.equals("") && !password.equals("")) {
 			if (!exist(login, comptes)) {
 				lblMessage.setText("Login non existant");
 				this.pack();
@@ -129,12 +150,15 @@ public class Connexion extends JDialog {
 			} else {
 				idx = getIdxCompte(login, comptes);
 				if (!comptes[idx].getPassword().equals(password)) {
-					lblMessage.setText("Mot de passe incorrecte");
+					lblMessage.setText("Mot de passe incorrect");
 					this.pack();
 					this.setLocationRelativeTo(null);
 				} else {
 					Main.compteCourent = comptes[idx];
 					Main.ajouterDesMotsDePasseAuTableau(comptes[idx].getLesMotsDePasse());
+					txtFieldLogin.setText("");
+					pswFieldPassword.setText("");
+					lblMessage.setText("");
 					dispose();
 				}
 			}

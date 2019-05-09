@@ -3,6 +3,7 @@ package mdp.untils.frames;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.List;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -28,6 +29,8 @@ public class Main extends JDialog {
 	private Connexion connexion = new Connexion();
 	private NouveauCompte nouveauCompte = new NouveauCompte();
 	private NouveauMotDePasse nouveauMotDePasse = new NouveauMotDePasse();
+	private Supprimer supprimer = new Supprimer();
+	private PreModifier modifier = new PreModifier();
 	private static MyFile fileComptes = new MyFile("/home/theteksa/Documents/comptes.txt", ';');
 	private static Compte[] comptes;
 	public static Compte compteCourent = null;
@@ -104,12 +107,12 @@ public class Main extends JDialog {
 		
 		JMenuItem mnuSupprimerMDP = new JMenuItem("Supprimer mot de passe");
 		mnuSupprimerMDP.setMnemonic('S');
-		mnuSupprimerMDP.addActionListener(null);
+		mnuSupprimerMDP.addActionListener(this::mnuSupprimerMotDePasseListener);
 		mnuMDP.add(mnuSupprimerMDP);
 		
 		JMenuItem mnuModifierMDP = new JMenuItem("Modifier mot de passe");
 		mnuModifierMDP.setMnemonic('M');
-		mnuModifierMDP.addActionListener(null);
+		mnuModifierMDP.addActionListener(this::mnuModifierListener);
 		mnuMDP.add(mnuModifierMDP);
 		
 		mnuMDP.addSeparator();
@@ -162,8 +165,10 @@ public class Main extends JDialog {
 	}
 	
 	private void mnuDeconnexionListener(ActionEvent event) {
-		clearTableau();
-		compteCourent = null;
+		if (compteCourent != null) {
+			clearTableau();
+			compteCourent = null;
+		}
 	}
 	
 	private void mnuNouveauCompteListener(ActionEvent event) {
@@ -171,7 +176,19 @@ public class Main extends JDialog {
 	}
 	
 	private void mnuNouveauMotDePasseListener(ActionEvent event) {
-		nouveauMotDePasse.setVisible(true);
+		if (compteCourent != null) {
+			nouveauMotDePasse.setVisible(true);	
+		}
+	}
+	
+	private void mnuSupprimerMotDePasseListener(ActionEvent event) {
+		if (compteCourent != null) {
+			supprimer.setVisible(true);
+		}
+	}
+	
+	private void mnuModifierListener(ActionEvent event) {
+		modifier.setVisible(true);
 	}
 	
 	private void mnuExitListener(ActionEvent event) {
@@ -205,13 +222,7 @@ public class Main extends JDialog {
 	}
 	
 	public static void addMotDePasse(MotDePasse m) {
-		MotDePasse[] newMotsDePasse = new MotDePasse[compteCourent.getLesMotsDePasse().length + 1];
-		
-		for (int i = 0; i < compteCourent.getLesMotsDePasse().length; i++) {
-			newMotsDePasse[i] = compteCourent.getLesMotsDePasse()[i];
-		}
-		newMotsDePasse[compteCourent.getLesMotsDePasse().length] = m;
-		compteCourent.setLesMotsDePasse(newMotsDePasse);
+		compteCourent.getLesMotsDePasse().add(m);
 		compteCourent.getFile().ajouter(m);
 	}
 	
@@ -220,32 +231,36 @@ public class Main extends JDialog {
 			return new String[0][0];
 		}
 		
-		String[][] result = new String[compteCourent.getLesMotsDePasse().length][4];
+		String[][] result = new String[compteCourent.getLesMotsDePasse().size()][4];
 		
 		for (int i = 0; i < result.length; i++) {
-			result[i][0] = compteCourent.getLesMotsDePasse()[i].getNom();
-			result[i][1] = compteCourent.getLesMotsDePasse()[i].getId();
-			result[i][2] = compteCourent.getLesMotsDePasse()[i].getAdresse();
-			result[i][3] = compteCourent.getLesMotsDePasse()[i].getMotDePasse();
+			result[i][0] = compteCourent.getLesMotsDePasse().get(i).getNom();
+			result[i][1] = compteCourent.getLesMotsDePasse().get(i).getId();
+			result[i][2] = compteCourent.getLesMotsDePasse().get(i).getAdresse();
+			result[i][3] = compteCourent.getLesMotsDePasse().get(i).getMotDePasse();
 		}
 		return result;
 	}
 	
-	public static void ajouterDesMotsDePasseAuTableau(MotDePasse[] lesMotsDePasse) {
-		for (int i = 0; i < lesMotsDePasse.length; i++) {
-			ajouterUnMotDePasseAuTableau(lesMotsDePasse[i]);
+	public static void ajouterDesMotsDePasseAuTableau(List<MotDePasse> lesMotsDePasse) {
+		for (int i = 0; i < lesMotsDePasse.size(); i++) {
+			ajouterUnMotDePasseAuTableau(lesMotsDePasse.get(i));
 		}
 	}
 	
 	public static void ajouterUnMotDePasseAuTableau(MotDePasse m) {
-		String[] mdpString = {m.getNom(), m.getId(), m.getAdresse(), m.getMotDePasse()};
+		Object[] mdpString = {m.getNom(), m.getId(), m.getAdresse(), m.getMotDePasse()};
 		
 		model.addRow(mdpString);
 	}
 	
 	public static void clearTableau() {
-		for (int i = 0; i < compteCourent.getLesMotsDePasse().length; i++) {
+		for (int i = 0; i < compteCourent.getLesMotsDePasse().size(); i++) {
 			model.removeRow(0);
 		}
+	}
+	
+	public static void majTableau() {
+		
 	}
 }

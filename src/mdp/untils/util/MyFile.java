@@ -120,4 +120,22 @@ public class MyFile {
 			e.printStackTrace();
 		}
 	}
+	
+	public void supprimer(MotDePasse m) {
+		FileWriter fw = null;
+		String[][] lesMotsDePasse = this.getString();
+		
+		try {
+			fw = new FileWriter(file);
+			for (int i = 0; i < lesMotsDePasse.length; i++) {
+				if (!Cryptage.decodage(lesMotsDePasse[i][2], lesMotsDePasse[i][3]).equals(m.getNom())) {
+					fw.write(lesMotsDePasse[i][0] + this.separator + lesMotsDePasse[i][1] + this.separator + lesMotsDePasse[i][2] + this.separator + lesMotsDePasse[i][3] + this.separator + lesMotsDePasse[i][4] + this.separator + lesMotsDePasse[i][5] + this.separator + lesMotsDePasse[i][6] + this.separator + lesMotsDePasse[i][7] + this.separator + lesMotsDePasse[i][8] + this.separator + lesMotsDePasse[i][9] + "\n");
+
+				}
+			}
+			fw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }

@@ -1,11 +1,14 @@
 package mdp.untils.types;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import mdp.untils.util.Cryptage;
 import mdp.untils.util.MyFile;
 
 public class Compte {
 
-	private MotDePasse[] lesMotsDePasse;
+	private List<MotDePasse> lesMotsDePasse;
 	private MyFile fileMotsDePasse;
 	private String login;
 	private String keyLogin;
@@ -46,19 +49,29 @@ public class Compte {
 	}
 	
 	public void setLesMotsDePasse(MotDePasse[] lesMotsDePasse) {
-		this.lesMotsDePasse = lesMotsDePasse;
+		List<MotDePasse> mdps = new ArrayList<MotDePasse>();
+		
+		for (int i = 0; i < lesMotsDePasse.length; i++) {
+			mdps.add(lesMotsDePasse[i]);
+		}
+		this.lesMotsDePasse = mdps;
 	}
 	
-	public MotDePasse[] getLesMotsDePasse() {
+	public List<MotDePasse> getLesMotsDePasse() {
 		return lesMotsDePasse;
 	}
 	
 	public void initLesMotsDePasse() {
 		String[][] motsDePasseString = this.getFile().getString();
-		lesMotsDePasse = new MotDePasse[motsDePasseString.length];
+		lesMotsDePasse = new ArrayList<MotDePasse>();
 		
-		for (int i = 0; i < lesMotsDePasse.length; i++) {
-			lesMotsDePasse[i] = new MotDePasse(Cryptage.decodage(motsDePasseString[i][0], motsDePasseString[i][1]), motsDePasseString[i][1], Cryptage.decodage(motsDePasseString[i][2], motsDePasseString[i][3]), motsDePasseString[i][3], Cryptage.decodage(motsDePasseString[i][4], motsDePasseString[i][5]), motsDePasseString[i][5], Cryptage.decodage(motsDePasseString[i][6], motsDePasseString[i][7]), motsDePasseString[i][7], Cryptage.decodage(motsDePasseString[i][8], motsDePasseString[i][9]), motsDePasseString[i][9]);
+		for (int i = 0; i < motsDePasseString.length; i++) {
+			lesMotsDePasse.add(new MotDePasse(Cryptage.decodage(motsDePasseString[i][0], motsDePasseString[i][1]), motsDePasseString[i][1], Cryptage.decodage(motsDePasseString[i][2], motsDePasseString[i][3]), motsDePasseString[i][3], Cryptage.decodage(motsDePasseString[i][4], motsDePasseString[i][5]), motsDePasseString[i][5], Cryptage.decodage(motsDePasseString[i][6], motsDePasseString[i][7]), motsDePasseString[i][7], Cryptage.decodage(motsDePasseString[i][8], motsDePasseString[i][9]), motsDePasseString[i][9]));
 		}
+	}
+	
+	public void supprimerMotDePasse(MotDePasse mdp) {
+		lesMotsDePasse.remove(mdp);
+		fileMotsDePasse.supprimer(mdp);
 	}
 }

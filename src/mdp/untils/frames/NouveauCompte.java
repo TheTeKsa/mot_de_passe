@@ -5,6 +5,10 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -23,6 +27,9 @@ public class NouveauCompte extends JDialog {
 	private String password;
 	private String confirmPassword;
 	
+	private JTextField txtFieldLogin;
+	private JPasswordField pswFieldMDP;
+	private JPasswordField pswFieldConfirmMDP;
 	private JLabel lblMessage = new JLabel("");
 
 	public NouveauCompte() {
@@ -40,7 +47,7 @@ public class NouveauCompte extends JDialog {
 		JLabel lblLogin = new JLabel("           Login :           ");
 		panLogin.add(lblLogin);
 		
-		JTextField txtFieldLogin = new JTextField();
+		txtFieldLogin = new JTextField();
 		txtFieldLogin.addFocusListener(new FocusAdapter() {
 			
 			@Override
@@ -59,7 +66,7 @@ public class NouveauCompte extends JDialog {
 		JLabel lblMDP = new JLabel("        Password :       ");
 		panMDP.add(lblMDP);
 		
-		JPasswordField pswFieldMDP = new JPasswordField();
+		pswFieldMDP = new JPasswordField();
 		pswFieldMDP.addFocusListener(new FocusAdapter() {
 			
 			@Override
@@ -78,7 +85,7 @@ public class NouveauCompte extends JDialog {
 		JLabel lblConfirmMDP = new JLabel(" Confirm password : ");
 		panConfirmMdp.add(lblConfirmMDP);
 		
-		JPasswordField pswFieldConfirmMDP = new JPasswordField();
+		pswFieldConfirmMDP = new JPasswordField();
 		pswFieldConfirmMDP.setPreferredSize(new Dimension(150, 25));
 		pswFieldConfirmMDP.addFocusListener(new FocusAdapter() {
 			
@@ -109,15 +116,70 @@ public class NouveauCompte extends JDialog {
 		
 		contentPan.add(panButton);
 		
+		this.addWindowListener(new WindowAdapter() {
+			
+			@Override
+			public void windowClosing(WindowEvent arg0) {
+				txtFieldLogin.setText("");
+				pswFieldMDP.setText("");
+				pswFieldConfirmMDP.setText("");
+				lblMessage.setText("");
+			}
+			
+		});
+		txtFieldLogin.addKeyListener(new KeyAdapter() {
+			
+			@Override
+			public void keyPressed(KeyEvent arg0) {
+				if (arg0.getKeyCode() == KeyEvent.VK_ENTER) {
+					login = txtFieldLogin.getText();
+					password = passwordToString(pswFieldMDP.getPassword());
+					confirmPassword = passwordToString(pswFieldConfirmMDP.getPassword());
+					btnValiderListener(null);
+				}
+			}
+			
+		});
+		pswFieldMDP.addKeyListener(new KeyAdapter() {
+			
+			@Override
+			public void keyPressed(KeyEvent arg0) {
+				if (arg0.getKeyCode() == KeyEvent.VK_ENTER) {
+					login = txtFieldLogin.getText();
+					password = passwordToString(pswFieldMDP.getPassword());
+					confirmPassword = passwordToString(pswFieldConfirmMDP.getPassword());
+					btnValiderListener(null);
+				}
+			}
+			
+		});
+		pswFieldConfirmMDP.addKeyListener(new KeyAdapter() {
+			
+			@Override
+			public void keyPressed(KeyEvent arg0) {
+				if (arg0.getKeyCode() == KeyEvent.VK_ENTER) {
+					login = txtFieldLogin.getText();
+					password = passwordToString(pswFieldMDP.getPassword());
+					confirmPassword = passwordToString(pswFieldConfirmMDP.getPassword());
+					btnValiderListener(null);
+				}
+			}
+			
+		});
+		
 		this.pack();
 		this.setLocationRelativeTo(null);
 	}
 	
 	private void btnValiderListener(ActionEvent event) {
-		if (login != null && password != null && confirmPassword != null) {
+		if (!login.equals("") && !password.equals("") && !confirmPassword.equals("")) {
 			if (!loginExist(login) && password.equals(confirmPassword)) {
 				Compte compte = new Compte(login, password);
 				Main.addCompte(compte);
+				txtFieldLogin.setText("");
+				pswFieldMDP.setText("");
+				pswFieldConfirmMDP.setText("");
+				lblMessage.setText("");
 				dispose();
 			} else if(loginExist(login)) {
 				lblMessage.setText("Le login existe deja");
@@ -136,6 +198,10 @@ public class NouveauCompte extends JDialog {
 	}
 	
 	private void btnQuitterListener(ActionEvent event) {
+		txtFieldLogin.setText("");
+		pswFieldMDP.setText("");
+		pswFieldConfirmMDP.setText("");
+		lblMessage.setText("");
 		dispose();
 	}
 	
