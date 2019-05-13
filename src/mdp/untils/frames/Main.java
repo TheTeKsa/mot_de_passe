@@ -3,6 +3,7 @@ package mdp.untils.frames;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.JDialog;
@@ -31,13 +32,15 @@ public class Main extends JDialog {
 	private NouveauMotDePasse nouveauMotDePasse = new NouveauMotDePasse();
 	private Supprimer supprimer = new Supprimer();
 	private PreModifier modifier = new PreModifier();
-	private static MyFile fileComptes = new MyFile("/home/theteksa/Documents/comptes.txt", ';');
+	private Rechercher rechercher = new Rechercher();
+	private static MyFile fileComptes = new MyFile(System.getProperty("user.home") + "/.programme/perso/comptes.txt", ';');
 	private static Compte[] comptes;
 	public static Compte compteCourent = null;
 	private static JTable tableauMotsDePasse;
 	private static DefaultTableModel model;
 	
 	public Main() {
+		System.out.println(System.getProperty("user.home"));
 		this.setTitle("Mot de passe");
 		this.setSize(600, 400);
 		this.setLocationRelativeTo(null);
@@ -120,7 +123,7 @@ public class Main extends JDialog {
 		JMenuItem mnuRechercherMDP = new JMenuItem("Rechercher");
 		mnuRechercherMDP.setMnemonic('R');
 		mnuRechercherMDP.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK));
-		mnuRechercherMDP.addActionListener(null);
+		mnuRechercherMDP.addActionListener(this::mnuRechercherListener);
 		mnuMDP.add(mnuRechercherMDP);
 		
 		JMenu mnuTrier = new JMenu("Trier");
@@ -128,12 +131,12 @@ public class Main extends JDialog {
 		
 		JMenuItem mnuCroissant = new JMenuItem("Croissant");
 		mnuCroissant.setMnemonic('C');
-		mnuCroissant.addActionListener(null);
+		mnuCroissant.addActionListener(this::mnuCroissantListener);
 		mnuTrier.add(mnuCroissant);
 		
 		JMenuItem mnuDecroissant = new JMenuItem("Decroissant");
 		mnuDecroissant.setMnemonic('D');
-		mnuDecroissant.addActionListener(null);
+		mnuDecroissant.addActionListener(this::mnuDecroissantListener);
 		mnuTrier.add(mnuDecroissant);
 		
 		mnuMDP.add(mnuTrier);
@@ -189,6 +192,24 @@ public class Main extends JDialog {
 	
 	private void mnuModifierListener(ActionEvent event) {
 		modifier.setVisible(true);
+	}
+	
+	private void mnuRechercherListener(ActionEvent event) {
+		rechercher.setVisible(true);
+	}
+	
+	private void mnuCroissantListener(ActionEvent event) {
+		MotDePasse.setInvert(false);
+		Collections.sort(compteCourent.getLesMotsDePasse());
+		clearTableau();
+		ajouterDesMotsDePasseAuTableau(compteCourent.getLesMotsDePasse());
+	}
+	
+	private void mnuDecroissantListener(ActionEvent event) {
+		MotDePasse.setInvert(true);
+		Collections.sort(compteCourent.getLesMotsDePasse());
+		clearTableau();
+		ajouterDesMotsDePasseAuTableau(compteCourent.getLesMotsDePasse());
 	}
 	
 	private void mnuExitListener(ActionEvent event) {
@@ -255,12 +276,10 @@ public class Main extends JDialog {
 	}
 	
 	public static void clearTableau() {
-		for (int i = 0; i < compteCourent.getLesMotsDePasse().size(); i++) {
+		int cpt = model.getRowCount();
+		
+		for (int i = 0; i < cpt; i++) {
 			model.removeRow(0);
 		}
-	}
-	
-	public static void majTableau() {
-		
 	}
 }

@@ -20,7 +20,7 @@ public class Compte {
 		this.keyLogin = keyLogin;
 		this.password = password;
 		this.keyPassword = keyPassword;
-		fileMotsDePasse = new MyFile("/home/theteksa/Documents/" + this.login + ".txt", ';');
+		fileMotsDePasse = new MyFile(System.getProperty("user.home") + "/.programme/perso/" + this.login + ".txt", ';');
 		initLesMotsDePasse();
 	}
 

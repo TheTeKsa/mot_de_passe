@@ -9,7 +9,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -28,6 +27,7 @@ public class Modifier extends JDialog{
 	private String adresse;
 	private String motDePasse;
 	private String confirmMotDePasse;
+	private MotDePasse mdp;
 	
 	private JTextField txtFieldNom;
 	private JTextField txtFieldId;
@@ -36,11 +36,18 @@ public class Modifier extends JDialog{
 	private JTextField txtConfirmMotDePasse;
 	private JLabel lblMessage = new JLabel("");
 
-	public Modifier(String nomC, String idC, String adresseC, String motDePasseC, String confirmMotDePasseC) {
+	public Modifier(String nomC, String idC, String adresseC, String motDePasseC, String confirmMotDePasseC, MotDePasse mdpC) {
 		this.setTitle("Nouveau mot de passe");
 		this.setResizable(false);
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.setModal(true);
+		
+		this.nom = nomC;
+		this.id = idC;
+		this.adresse = adresseC;
+		this.motDePasse = motDePasseC;
+		this.confirmMotDePasse = confirmMotDePasseC;
+		this.mdp = mdpC;
 		
 		JPanel contentPan = (JPanel) this.getContentPane();
 		contentPan.setLayout(new BoxLayout(contentPan, BoxLayout.Y_AXIS));
@@ -52,14 +59,7 @@ public class Modifier extends JDialog{
 		panNom.add(lblNom);
 		
 		txtFieldNom = new JTextField();
-		txtFieldNom.addFocusListener(new FocusAdapter() {
-			
-			@Override
-			public void focusLost(FocusEvent e) {
-				nom = txtFieldNom.getText();
-			}
-			
-		});
+		txtFieldNom.setFocusable(false);
 		panNom.add(txtFieldNom);
 		
 		contentPan.add(panNom);
@@ -258,35 +258,21 @@ public class Modifier extends JDialog{
 	}
 	
 	private void btnValiderListener(ActionEvent event) {
-		if (Main.compteCourent != null) {
-			if (!nom.equals("") && !motDePasse.equals("") && !confirmMotDePasse.equals("")) {
-				if (!nomExist(nom) && motDePasse.equals(confirmMotDePasse)) {
-					MotDePasse mdp = new MotDePasse(Main.compteCourent.getLogin(), nom, id, adresse, motDePasse);
-					Main.addMotDePasse(mdp);
-					Main.ajouterUnMotDePasseAuTableau(mdp);
-					txtFieldNom.setText("");
-					txtFieldId.setText("");
-					txtFieldAdresse.setText("");
-					motDePasse = txtFieldMotDePasse.getText();
-					confirmMotDePasse = txtConfirmMotDePasse.getText();
-					lblMessage.setText("");
-					dispose();
-				} else if (nomExist(nom)) {
-					lblMessage.setText("Le nom existe deja");
-					this.pack();
-					this.setLocationRelativeTo(null);
-				} else {
-					lblMessage.setText("Mots de passe non coherent");
-					this.pack();
-					this.setLocationRelativeTo(null);
-				}
+		if (!nom.equals("") && !motDePasse.equals("") && !confirmMotDePasse.equals("")) {
+			if (motDePasse.equals(confirmMotDePasse)) {
+				MotDePasse unMdp = new MotDePasse(Main.compteCourent.getLogin(), nom, id, adresse, motDePasse);
+				Main.compteCourent.supprimerMotDePasse(mdp);
+				Main.addMotDePasse(unMdp);
+				Main.clearTableau();
+				Main.ajouterDesMotsDePasseAuTableau(Main.compteCourent.getLesMotsDePasse());
+				dispose();
 			} else {
-				lblMessage.setText("Veillez remplir les champs");
+				lblMessage.setText("Mots de passe non coherent");
 				this.pack();
 				this.setLocationRelativeTo(null);
 			}
 		} else {
-			lblMessage.setText("Veillez vous connecter");
+			lblMessage.setText("Veillez remplir les champs");
 			this.pack();
 			this.setLocationRelativeTo(null);
 		}
@@ -300,17 +286,6 @@ public class Modifier extends JDialog{
 		txtConfirmMotDePasse.setText("");
 		lblMessage.setText("");
 		dispose();
-	}
-	
-	private boolean nomExist(String nom) {
-		List<MotDePasse> lesMotsDePasse = Main.compteCourent.getLesMotsDePasse();
-		
-		for (int i = 0; i < lesMotsDePasse.size(); i++) {
-			if (lesMotsDePasse.get(i).getNom().equals(nom)) {
-				return true;
-			}
-		}
-		return false;
 	}
 	
 }

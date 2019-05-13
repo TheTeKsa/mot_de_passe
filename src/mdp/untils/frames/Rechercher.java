@@ -20,15 +20,15 @@ import javax.swing.JTextField;
 import mdp.untils.types.MotDePasse;
 
 @SuppressWarnings("serial")
-public class PreModifier extends JDialog{
-
+public class Rechercher extends JDialog {
+	
 	private String nom;
 	
 	private JTextField txtFieldNom;
 	private JLabel lblMessage = new JLabel("");
-	
-	public PreModifier() {
-		this.setTitle("Modifier");
+
+	public Rechercher() {
+		this.setTitle("Rechercher");
 		this.setResizable(false);
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.setModal(true);
@@ -103,8 +103,8 @@ public class PreModifier extends JDialog{
 		if (!nom.equals("")) {
 			if (nomExist(nom, mdps)) {
 				MotDePasse mdp = mdps.get(idxMotDePasse(nom, mdps));
-				Modifier m = new Modifier(mdp.getNom(), mdp.getId(), mdp.getAdresse(), mdp.getMotDePasse(), mdp.getMotDePasse(), mdp);
-				m.setVisible(true);
+				Main.clearTableau();
+				Main.ajouterUnMotDePasseAuTableau(mdp);
 				txtFieldNom.setText("");
 				lblMessage.setText("");
 				dispose();
@@ -114,9 +114,9 @@ public class PreModifier extends JDialog{
 				this.setLocationRelativeTo(null);
 			}
 		} else {
-			lblMessage.setText("Veillez remplir le champ");
-			this.pack();
-			this.setLocationRelativeTo(null);
+			Main.clearTableau();
+			Main.ajouterDesMotsDePasseAuTableau(Main.compteCourent.getLesMotsDePasse());
+			dispose();
 		}
 	}
 	

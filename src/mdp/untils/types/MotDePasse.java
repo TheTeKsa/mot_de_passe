@@ -1,8 +1,10 @@
 package mdp.untils.types;
 
+import java.util.Comparator;
+
 import mdp.untils.util.Cryptage;
 
-public class MotDePasse {
+public class MotDePasse implements Comparator<MotDePasse>, Comparable<MotDePasse> {
 
 	private String loginCompte;
 	private String keyLoginCompte;
@@ -14,6 +16,8 @@ public class MotDePasse {
 	private String keyAdresse;
 	private String motDePasse;
 	private String keyMotDePasse;
+	
+	private static boolean invert = false;
 	
 	public MotDePasse(String loginCompte, String keyLoginCompte, String nom, String keyNom, String id, String keyId, String adresse, String keyAdresse, String motDePasse, String keyMotDePasse) {
 		this.loginCompte = loginCompte;
@@ -86,5 +90,30 @@ public class MotDePasse {
 	
 	public String getKeyLoginCompte() {
 		return keyLoginCompte;
+	}
+
+	public static boolean isInvert() {
+		return invert;
+	}
+	
+	public static void setInvert(boolean i) {
+		invert = i;
+	}
+	
+	@Override
+	public int compare(MotDePasse o1, MotDePasse o2) {
+		if(isInvert())
+			return -o1.getNom().compareTo(o2.getNom());
+		else
+			return o1.getNom().compareTo(o2.getNom());
+				
+	}
+
+	@Override
+	public int compareTo(MotDePasse o) {
+		if(isInvert())
+			return -this.getNom().compareTo(o.getNom());
+		else
+			return this.getNom().compareTo(o.getNom());
 	}
 }

@@ -19,6 +19,7 @@ public class MyFile {
 		this.file = new File(url);
 		this.separator = separator;
 		
+		this.file.getParentFile().mkdirs();
 		if (!this.file.exists()) {
 			try {
 				this.file.createNewFile();
