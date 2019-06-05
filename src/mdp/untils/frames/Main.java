@@ -40,7 +40,6 @@ public class Main extends JDialog {
 	private static DefaultTableModel model;
 	
 	public Main() {
-		System.out.println(System.getProperty("user.home"));
 		this.setTitle("Mot de passe");
 		this.setSize(600, 400);
 		this.setLocationRelativeTo(null);

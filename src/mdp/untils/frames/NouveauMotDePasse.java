@@ -24,11 +24,11 @@ import mdp.untils.types.MotDePasse;
 @SuppressWarnings("serial")
 public class NouveauMotDePasse extends JDialog {
 
-	private String nom;
-	private String id;
-	private String adresse;
-	private String motDePasse;
-	private String confirmMotDePasse;
+	private String nom = "";
+	private String id = "";
+	private String adresse = "";
+	private String motDePasse = "";
+	private String confirmMotDePasse = "";
 
 	private JTextField txtFieldNom;
 	private JTextField txtFieldId;
